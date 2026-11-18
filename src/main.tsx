@@ -384,59 +384,69 @@ function App() {
                   </p>
                 ))}
                 {p.level === 3 && (
-                  <label>
-                    Required Heeling element
-                    <select
-                      value={
-                        p.plan.judgeOptions.level3HeelingRequiredElement || ""
-                      }
-                      onChange={(e) =>
-                        update({
-                          plan: {
-                            ...p.plan,
-                            judgeOptions: {
-                              ...p.plan.judgeOptions,
-                              level3HeelingRequiredElement: e.target.value,
-                            },
-                          },
-                        })
-                      }
-                    >
-                      <option value="">Choose an element</option>
-                      <option value="circle">Circle</option>
-                      <option value="figure-8">Figure 8</option>
-                      <option value="270-turn">270-degree turn</option>
-                    </select>
-                  </label>
-                )}
+  <>
+    <label>
+      Required Heeling element
+      <select
+        value={
+          p.plan.judgeOptions.level3HeelingRequiredElement || "figure-8"
+        }
+        onChange={(e) =>
+          update({
+            plan: {
+              ...p.plan,
+              judgeOptions: {
+                ...p.plan.judgeOptions,
+                level3HeelingRequiredElement: e.target.value,
+              },
+            },
+          })
+        }
+      >
+        <option value="circle">Circle</option>
+        <option value="figure-8">Figure 8</option>
+        <option value="270-turn">270-degree turn</option>
+      </select>
+    </label>
+    <p className="hint">
+      Default: Figure 8. You may select Circle or 270-degree turn instead
+      from the list.
+    </p>
+  </>
+)}
                 {p.level === 5 && (
-                  <label>
-                    Section containing Figure 8
-                    <select
-                      value={p.plan.judgeOptions.level5FigureEightSegment || ""}
-                      onChange={(e) =>
-                        update({
-                          plan: {
-                            ...p.plan,
-                            judgeOptions: {
-                              ...p.plan.judgeOptions,
-                              level5FigureEightSegment: e.target.value,
-                            },
-                          },
-                        })
-                      }
-                    >
-                      <option value="">Choose a section</option>
-                      {p.plan.items
-                        .filter((i) => i.segment)
-                        .map((i) => (
-                          <option key={i.segment} value={i.segment}>
-                            Section {i.segment}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                )}
+  <>
+    <label>
+      Section containing Figure 8
+      <select
+        value={p.plan.judgeOptions.level5FigureEightSegment || "1"}
+        onChange={(e) =>
+          update({
+            plan: {
+              ...p.plan,
+              judgeOptions: {
+                ...p.plan.judgeOptions,
+                level5FigureEightSegment: e.target.value,
+              },
+            },
+          })
+        }
+      >
+        {p.plan.items
+          .filter((i) => i.segment)
+          .map((i) => (
+            <option key={i.segment} value={i.segment}>
+              Section {i.segment}
+            </option>
+          ))}
+      </select>
+    </label>
+    <p className="hint">
+      Default: Section 1. Select a different section if the Figure 8 will
+      be performed elsewhere.
+    </p>
+  </>
+)}
                 <ol className="course">
                   {p.plan.items.map((item, index) => {
                     const def = OBEDIENCE_RULES[p.level].exercises.find(
