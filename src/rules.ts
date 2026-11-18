@@ -672,7 +672,7 @@ export function defaultObediencePlan(
       segment: item.allowsPerformanceSegments ? 1 : undefined,
       exerciseFinished: true,
     })),
-    judgeOptions: {},
+    judgeOptions:   level === 3     ? { level3HeelingRequiredElement: "figure-8" }     : level === 5       ? { level5FigureEightSegment: "1" }       : {},
   };
 }
 
