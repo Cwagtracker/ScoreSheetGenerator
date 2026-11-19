@@ -217,16 +217,78 @@ export async function makePdf(
       );
       page = ref.page;
       y = ref.y;
-      for (const ex of rules.exercises) {
-        const lines = wrap(ex.description, 548, 8);
-        const deductions = wrap(
-          Object.entries(ex.deductions)
-            .map(([k, v]) => `${k}: ${v.join("; ")}`)
-            .join(" | "),
-          548,
-          8,
-        );
-        const height = 22 + (lines.length + deductions.length) * 11;
+     for (const ex of rules.exercises) {
+  const figureEightSection = Number(
+    p.plan.judgeOptions.level5FigureEightSegment || "1",
+  );
+
+  const matchingItem = p.plan.items.find(
+    (item) =>
+      item.exerciseId === ex.id &&
+      (item.segment || 1) === figureEightSection,
+  );
+
+  const isFigureEightSection =
+    p.level === 5 &&
+    ex.id === "l5-heeling-figure-8" &&
+    !!matchingItem;
+
+  const isCombined =
+    isFigureEightSection &&
+    matchingItem?.exerciseFinished === false;
+
+  const heading =
+    ex.name +
+    (ex.allowsPerformanceSegments
+      ? ` - Section ${figureEightSection}`
+      : "") +
+    (isFigureEightSection ? " [FIGURE 8]" : "") +
+    ` (${ex.maximumPoints ?? "Pass/fail"} points)`;
+
+  const lines = wrap(ex.description, 548, 8);
+
+  const deductions = wrap(
+    Object.entries(ex.deductions)
+      .map(([k, v]) => `${k}: ${v.join("; ")}`)
+      .join(" | "),
+    548,
+    8,
+  );
+
+  const combinedNote = isCombined
+    ? [
+        "CONTINUES INTO THE NEXT EXERCISE.",
+        "Mark Exercise Finished after that exercise.",
+      ]
+    : [];
+
+  const height =
+    22 +
+    (lines.length + deductions.length + combinedNote.length) * 11;
+
+  if (y - height < 65) {
+    page = header(
+      `OBEDIENCE ${p.level} | REFERENCE CONTINUED`,
+      person,
+    ).page;
+    y = 610;
+  }
+
+  text(page, heading, 32, y, 9, bold);
+  y -= 13;
+
+  for (const note of combinedNote) {
+    text(page, note, 32, y, 8, bold);
+    y -= 11;
+  }
+
+  for (const line of [...lines, ...deductions]) {
+    text(page, line, 32, y, 8);
+    y -= 11;
+  }
+
+  y -= 9;
+}
         if (y - height < 65) {
           page = header(
             `OBEDIENCE ${p.level} | REFERENCE CONTINUED`,
